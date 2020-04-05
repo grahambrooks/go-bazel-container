@@ -1,4 +1,4 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 
-# gazelle:prefix github.com/kuona/kuona-api
+# gazelle:prefix github.com/grahambrooks/gp-bazel-container-api
 gazelle(name = "gazelle")
