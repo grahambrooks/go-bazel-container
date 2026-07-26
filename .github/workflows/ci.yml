@@ -23,7 +23,16 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
-      # Legacy WORKSPACE repo: Bazel 8+ ignores WORKSPACE by default, which
-      # fails as "unable to find package for @@[unknown repo ...]".
-      - run: bazel build --enable_workspace //...
-      - run: bazel test --enable_workspace //... --test_output=errors
+      # Legacy WORKSPACE repo. `--enable_workspace` alone is not enough on
+      # Bazel 8+: Bzlmod still owns repo resolution, so WORKSPACE deps stay
+      # invisible ("No repository visible as '@io_bazel_rules_docker'"). Pin the
+      # last Bazel line that treats WORKSPACE as native. Migrate the repo to
+      # MODULE.bazel and this stack stops applying to it.
+      - name: Build
+        env:
+          USE_BAZEL_VERSION: "7.4.1"
+        run: bazel build //...
+      - name: Test
+        env:
+          USE_BAZEL_VERSION: "7.4.1"
+        run: bazel test //... --test_output=errors
