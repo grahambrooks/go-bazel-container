@@ -23,5 +23,7 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
-      - run: bazel build //...
-      - run: bazel test //... --test_output=errors
+      # Legacy WORKSPACE repo: Bazel 8+ ignores WORKSPACE by default, which
+      # fails as "unable to find package for @@[unknown repo ...]".
+      - run: bazel build --enable_workspace //...
+      - run: bazel test --enable_workspace //... --test_output=errors
